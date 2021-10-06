@@ -37,7 +37,7 @@ class Setting:
             "server": "127.0.0.1",
             "user": "root",
             "password": "VPuRS*lodx854321",
-            "db": "sys",
+            "db": "medicine",
             "driver": "MySQL ODBC 5.3 ANSI Driver"
         }
         self.sett_socket = {
