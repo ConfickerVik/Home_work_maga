@@ -2,11 +2,8 @@ import socket
 import os
 import sys
 import xml.etree.ElementTree as ET
+import json
 
-
-def edb(query):
-    query["db"] = "nosql" if query["db"] != "sql" else "sql"
-    return query
 
 def create_xml(**data):
     main_tag = ET.Element("Information")
@@ -27,17 +24,18 @@ if __name__ == "__main__":
 
     query_json = {"db": "nosql"} 
     # настройки подключения к серверу
-    # sock = socket.socket()
-    # sock.connect(('localhost', 9090))
+    sock = socket.socket()
+    sock.connect(('localhost', 9090))
     while True:
         comand = str(input("Введите команду: "))
         if comand == 'ex':
             # sock.send(message.encode())
             print('Сессия завершена!')
-            # sock.close()
+            sock.close()
             sys.exit()
         elif comand == "edb":
-            query_json = edb(query_json)
+            sock.send("edb".encode())
+            print("Server: " + sock.recv(1024).decode())
         elif comand == "s":
             new_user = input("Новый пациент?: ")
             if new_user.lower() == "да":
@@ -51,8 +49,10 @@ if __name__ == "__main__":
                 oms = str(input("Введите номер полиса пациента: "))
                 xml = create_xml(ID=id_user, FName=fname, SName=sname, MName=mname, OMS=oms) 
                 print("\n", xml, "\n", end="\n")
-                # Отправим на сервер 
-                # 
+                # Отправим на сервер
+                sock.send(xml.encode())
+                # Вывод результата обработки сервером
+                print("Server: " + sock.recv(1024).decode())
             else:
                 id_user = input("Введите id пациента: ")
                 tdate = input("Введите дату сдачи теста пациентом: ")
@@ -70,8 +70,10 @@ if __name__ == "__main__":
                 }
                 print("\n", data_json, "\n", end="\n")
                 # Отправим на сервер
+                send_json = json.dumps(data_json)
+                sock.send(send_json.encode())
+                # Вывод результата обработки сервером
+                print("Server: " + sock.recv(1024).decode())
         else:
-            # sock.send(message.encode())
-            # Вывод результата обработки сервером
-            # print(sock.recv(1024).decode())
+            # Неверная команда!
             print("LOL!")
