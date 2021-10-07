@@ -9,14 +9,13 @@ if __name__ == "__main__":
     print("<genres> - Сгенерировать результаты тестов!")
     print("<query> - Отправить запрос в бд!")
     print("<ex> - Выход из программы!")
-    print()
 
     # настройки подключения к серверу
     sock = socket.socket()
     sock.connect(('localhost', 9090))
     while True:
         query_json = {}
-        comand = str(input("Введите команду: "))
+        comand = str(input("\nВведите команду: "))
         if comand == 'ex':
             # sock.send(message.encode())
             print('Сессия завершена!')
@@ -38,7 +37,7 @@ if __name__ == "__main__":
             # Отправляем на серв, там сгенерируем номера омс и даты рождения
             sock.send(json.dumps(query_json).encode())
             # Печатаем ответ сервера
-            print(sock.recv(1024).decode)
+            print(sock.recv(1024).decode())
         elif comand == "query":
             print("Вы попали в мир запросов) Вам необходимо ввести некоторые данные: ")
             fname = str(input("Введите имя пациента: "))
@@ -53,7 +52,11 @@ if __name__ == "__main__":
             # Отправляем на серв, там сгенерируем номера омс и даты рождения
             sock.send(json.dumps(query_json).encode())
             # Печатаем ответ сервера
-            print(sock.recv(1024).decode)
+            print("\nРезультат запроса: ")
+            response = sock.recv(2048).decode()
+            resp_json = json.loads(response)
+            for row in resp_json["table"]:
+                print(row)
         else:
             # sock.send(message.encode())
             # Вывод результата обработки сервером
